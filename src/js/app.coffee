@@ -4,20 +4,27 @@ d3 = require "d3"
 class BetterProgressMeter
 
   constructor: (options) ->
-#  constructor: (rootEl, size, start, expectedStart) ->
 
     @rootEl = options.rootEl or document.createElement("div")
     @size = options.size or 104
-    @actual = options.actual or 0
-    @expected = options.expected or 0
+    @actual = @normalizePcts(options.actual)
+    @expected = @normalizePcts(options.expected)
 
     @actualArc = null
     @expectedArc = null
     @actualArcPath = null
     @expectedArcPath = null
 
-      @drawArcs()
-      @updateProgress(@expected, @actual)
+    @drawArcs()
+    @updateProgress(@expected, @actual)
+
+
+  normalizePcts: (pct) ->
+    num = Number(pct)
+    return 0 if isNaN(num)
+    return 1 if num > 1
+    return 0 if num < 0
+    return num
 
   pctToRadians: (pct) ->
     Math.PI * 2 * pct
@@ -141,6 +148,9 @@ class BetterProgressMeter
     trns.call(arcTween, @pctToRadians(newProgress), arc)
 
   updateProgress: (expected, actual) ->
+    expected = @normalizePcts(expected)
+    actual = @normalizePcts(actual)
+
     changeColor = null
     console.log
     if Math.abs(expected - actual) > .5
