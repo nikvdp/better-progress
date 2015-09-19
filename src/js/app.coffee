@@ -3,64 +3,37 @@ d3 = require "d3"
 
 size = 70
 pct = .5
-angleSize = Math.PI * 2 * pct
+outerArcAngle = Math.PI * 2 * pct
+innerArcAngle = outerArcAngle / 2
 
 console.log '≥≥ Size is: ', size
-console.log '≥≥ Angle size is: ', angleSize
-
-# some test data
-data = [ {
-  start: 0
-  size: angleSize
-  color: 'green'
-} ]
-
-data2 = [ {
-  start: 0
-  size: angleSize / 2
-  color: 'red'
-} ]
+console.log '≥≥ Angle size is: ', outerArcAngle
 
 $(document).ready ->
-  arc = d3.svg.arc()
-    .innerRadius(Math.floor(size * .95))
-    .outerRadius(size)
-    .startAngle((d, i) ->
-      d.start
-    ).endAngle((d, i) ->
-      d.start + d.size
-    )
+  outerArc = d3.svg.arc()
+    .innerRadius(Math.floor(size))
+    .outerRadius(size - 5)
+    .startAngle(0)
 
-  arc2 = d3.svg.arc()
-    .innerRadius(Math.floor(size * .80))
-    .outerRadius(size - 20)
-    .startAngle((d, i) ->
-      d.start
-    ).endAngle((d, i) ->
-      d.start + d.size
-    )
+  innerArc = d3.svg.arc()
+    .innerRadius(Math.floor(size - 10))
+    .outerRadius(size - 15)
+    .startAngle(0)
 
-  chart = d3.select('body')
-    .append('svg:svg')
+  svg = d3.select('body')
+    .append('svg')
     .attr('class', 'chart')
-    .append('svg:g')
-    .attr('transform', 'translate(' + Math.floor(size) + ',' + Math.floor(size) + ')')
+    .append('g')
+    .attr('transform', "translate(#{Math.floor(size)}, #{Math.floor(size)})")
 
-  path = chart.selectAll('path')
 
-  path
-    .data(data)
-    .enter()
-    .append('svg:path')
-    .style('fill', (d, i) ->
-      d.color
-    ).attr 'd', arc
+  svg.append("path")
+    .datum(endAngle: outerArcAngle)
+    .style('fill', 'green')
+    .attr('d', outerArc)
 
-  path
-    .data(data2)
-    .enter()
-    .append('svg:path')
-    .style('fill', (d, i) ->
-      d.color
-    ).attr 'd', arc2
+  svg.append("path")
+    .datum(endAngle: innerArcAngle)
+    .style('fill', 'lightgreen')
+    .attr('d', innerArc)
 
