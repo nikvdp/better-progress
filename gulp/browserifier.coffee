@@ -26,7 +26,6 @@ browserifier = (infile, outfile, transforms, development) ->
     outdir = path.dirname(outfile)
     outfilename = path.basename(outfile)
 
-    console.log "Outdir: ", outdir, "outfilename: ", outfilename
     b.bundle()
     .on('error', (e) ->
       gutil.log gutil.colors.red('Browserify Error!!  ') + e.message
