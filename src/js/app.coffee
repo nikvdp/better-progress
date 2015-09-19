@@ -5,7 +5,7 @@ class BetterProgressMeter
 
   constructor: (rootEl, size, start, expectedStart) ->
     @rootEl = rootEl
-    @size = size or 200
+    @size = size or 104
     @actual = start or 0
     @expected = expectedStart or 0
 
@@ -24,18 +24,25 @@ class BetterProgressMeter
   drawArcs: () ->
     start = @pctToRadians(@actual)
     expectedStart = @pctToRadians(@expected)
-    radius = @size / 2
+    radius = Math.floor(@size / 2)
+
+    actualArcWidth = Math.floor(radius*0.1154) # calculate the width by ratio from original spec image
+
+    edge = radius - actualArcWidth # keep decrementing this as we paint each of the inside arcs
 
     @actualArc = d3.svg.arc()
-    .innerRadius(Math.floor(radius))
-    .outerRadius(radius - 5)
+    .outerRadius(radius)
+    .innerRadius(edge)
     .startAngle(0)
+
+    edge -= 1 # allow a small gap between the two progress meters
 
     @expectedArc = d3.svg.arc()
-    .innerRadius(Math.floor(radius - 10))
-    .outerRadius(radius - 15)
+    .outerRadius(edge)
+    .innerRadius(edge - (actualArcWidth/2))
     .startAngle(0)
 
+    edge -= actualArcWidth/2 # subtract the widht of the inner (expected) meter
 
     svg = d3.select(@rootEl)
     .append('svg')
@@ -44,14 +51,16 @@ class BetterProgressMeter
     .append('g')
     .attr('transform', "translate(#{Math.floor(radius)}, #{Math.floor(radius)})")
 
+    edge -= actualArcWidth # leave a gap between the inner meter and the gray circle
+
     innerCircle = d3.svg.arc()
+    .outerRadius(edge)
     .innerRadius(0)
-    .outerRadius(radius - 25)
     .startAngle(0)
     .endAngle(@pctToRadians(1))
 
     svg.append("path")
-    .style("fill", "lightgray")
+    .style("fill", "#f4f4f4")
     .attr('d', innerCircle)
 
     svg.append("text")
