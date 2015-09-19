@@ -5,9 +5,9 @@ class BetterProgressMeter
 
   constructor: (rootEl, size, start, expectedStart) ->
     @rootEl = rootEl
-    @size = size
-    @actual = start
-    @expected = expectedStart
+    @size = size or 200
+    @actual = start or 0
+    @expected = expectedStart or 0
 
     @actualArc = null
     @expectedArc = null
@@ -83,20 +83,14 @@ class BetterProgressMeter
     @_updateProgressMeter(actual, @actualArcPath, @actualArc)
 
 
-
-
 main = () ->
-  a = new BetterProgressMeter("body", 400, .5, .25)
+  a = new BetterProgressMeter("body")
   button = $('<button>hello</button>')
   button.on "click", ->
     a._updateProgressMeter Math.random(), a.expectedArcPath, a.expectedArc
   window.u = a
 
   $('body').append button
-
-
-
-
 
 
 $(document).ready(main)
