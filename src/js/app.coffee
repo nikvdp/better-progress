@@ -16,6 +16,7 @@ class BetterProgressMeter
 
     if rootEl
       @drawArcs()
+      @updateProgress(@expected, @actual)
 
   pctToRadians: (pct) ->
     Math.PI * 2 * pct
@@ -53,6 +54,30 @@ class BetterProgressMeter
     .style("fill", "lightgray")
     .attr('d', innerCircle)
 
+    svg.append("text")
+    .style("font-family", "sans-serif")
+    .attr("data-hook", "actual-progress-text")
+    .attr("text-anchor", "middle")
+    .attr("dx", ".3em")
+    .attr("fill", "black")
+
+    svg.append("text")
+    .style("font-family", "sans-serif")
+    .attr("text-anchor", "middle")
+    .attr("dy", "1em")
+    .attr("fill", "black")
+    .text("Progress")
+
+
+    ###
+  .style("font-size",20)
+  .append("textPath")
+//  .attr("textLength",function(d,i){return 90-i*5 ;})
+  .attr("xlink:href",function(d,i){return "#s"+i;})
+  .attr("startOffset",function(d,i){return 3/20;})
+  .attr("dy","-1em")
+  .text(function(d){return d.label;})
+    ###
     @actualArcPath = svg.append("path")
     .datum(endAngle: start)
     .style('fill', 'green')
@@ -93,9 +118,13 @@ class BetterProgressMeter
     @_updateProgressMeter(expected, @expectedArcPath, @expectedArc)
     @_updateProgressMeter(actual, @actualArcPath, @actualArc)
 
+    $(@rootEl)
+    .find("[data-hook=actual-progress-text]")
+    .text(Math.floor(actual*100) + "%")
+
 
 main = () ->
-  a = new BetterProgressMeter("body")
+  a = new BetterProgressMeter("body", 175, .3, .6)
   button = $('<button>hello</button>')
   button.on "click", ->
     a._updateProgressMeter Math.random(), a.expectedArcPath, a.expectedArc
