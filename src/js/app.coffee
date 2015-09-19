@@ -6,12 +6,12 @@ class BetterProgressMeter
   constructor: (rootEl, size, start, expectedStart) ->
     @rootEl = rootEl
     @size = size
-    @progress = start
+    @actual = start
     @expected = expectedStart
 
-    @progressArc = null
+    @actualArc = null
     @expectedArc = null
-    @progressArcPath = null
+    @actualArcPath = null
     @expectedArcPath = null
 
     if rootEl
@@ -21,12 +21,11 @@ class BetterProgressMeter
     Math.PI * 2 * pct
 
   drawArcs: () ->
-#  drawArcs = (rootEl, size, start, expectedStart) ->
-    start = @pctToRadians(@progress)
+    start = @pctToRadians(@actual)
     expectedStart = @pctToRadians(@expected)
     radius = @size / 2
 
-    @progressArc = d3.svg.arc()
+    @actualArc = d3.svg.arc()
     .innerRadius(Math.floor(radius))
     .outerRadius(radius - 5)
     .startAngle(0)
@@ -43,10 +42,10 @@ class BetterProgressMeter
     .append('g')
     .attr('transform', "translate(#{Math.floor(radius)}, #{Math.floor(radius)})")
 
-    @progressArcPath = svg.append("path")
+    @actualArcPath = svg.append("path")
     .datum(endAngle: start)
     .style('fill', 'green')
-    .attr('d', @progressArc)
+    .attr('d', @actualArc)
 
     @expectedArcPath = svg.append("path")
     .datum(endAngle: expectedStart)
@@ -81,7 +80,7 @@ class BetterProgressMeter
 
   updateProgress: (expected, actual) ->
     @_updateProgressMeter(expected, @expectedArcPath, @expectedArc)
-    @_updateProgressMeter(actual, @progressArcPath, @progressArc)
+    @_updateProgressMeter(actual, @actualArcPath, @actualArc)
 
 
 
