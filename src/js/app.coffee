@@ -1,48 +1,47 @@
 $ = require "jquery"
 d3 = require "d3"
 
-size = 70
-pct = .5
+
+main = () ->
+  drawArcs(400, .5, .25)
 
 pctToRadians = (pct) ->
   Math.PI * 2 * pct
 
-outerArcAngle = pctToRadians(pct)
-innerArcAngle = pctToRadians(pct/2)
-
-main = () ->
-  drawArcs()
-
-drawArcs = ->
+drawArcs = (size, start, expectedStart) ->
+  start = pctToRadians(start)
+  expectedStart = pctToRadians(expectedStart)
+  radius = size / 2
 
   outerArc = d3.svg.arc()
-    .innerRadius(Math.floor(size))
-    .outerRadius(size - 5)
+    .innerRadius(Math.floor(radius))
+    .outerRadius(radius - 5)
     .startAngle(0)
 
   innerArc = d3.svg.arc()
-    .innerRadius(Math.floor(size - 10))
-    .outerRadius(size - 15)
+    .innerRadius(Math.floor(radius - 10))
+    .outerRadius(radius - 15)
     .startAngle(0)
 
   svg = d3.select('body')
     .append('svg')
-    .attr('class', 'chart')
+    .attr("width", size)
+    .attr("height", size)
     .append('g')
-    .attr('transform', "translate(#{Math.floor(size)}, #{Math.floor(size)})")
+    .attr('transform', "translate(#{Math.floor(radius)}, #{Math.floor(radius)})")
 
   outerArcPath = svg.append("path")
-    .datum(endAngle: outerArcAngle)
+    .datum(endAngle: start)
     .style('fill', 'green')
     .attr('d', outerArc)
 
   innerArcPath = svg.append("path")
-    .datum(endAngle: innerArcAngle)
+    .datum(endAngle: expectedStart)
     .style('fill', 'lightgreen')
     .attr('d', innerArc)
 
 
-  updateProgress = (newProgress, path, arc) ->
+  updateProgressMeter = (newProgress, path, arc) ->
     ###
     Animate a transition between the current progress and the provided progress
     for the given arc and arc path
@@ -71,7 +70,7 @@ drawArcs = ->
   # Temporary function to add a button to the document for easy testing
     button = $('<button>hello</button>')
     button.on "click", ->
-      updateProgress Math.random(), innerArcPath, innerArc
+      updateProgressMeter Math.random(), innerArcPath, innerArc
 
     $('body').append button
 
