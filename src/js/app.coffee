@@ -35,12 +35,23 @@ class BetterProgressMeter
     .outerRadius(radius - 15)
     .startAngle(0)
 
+
     svg = d3.select(@rootEl)
     .append('svg')
     .attr("width", @size)
     .attr("height", @size)
     .append('g')
     .attr('transform', "translate(#{Math.floor(radius)}, #{Math.floor(radius)})")
+
+    innerCircle = d3.svg.arc()
+    .innerRadius(0)
+    .outerRadius(radius - 25)
+    .startAngle(0)
+    .endAngle(@pctToRadians(1))
+
+    svg.append("path")
+    .style("fill", "lightgray")
+    .attr('d', innerCircle)
 
     @actualArcPath = svg.append("path")
     .datum(endAngle: start)
