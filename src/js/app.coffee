@@ -1,47 +1,60 @@
 $ = require "jquery"
 d3 = require "d3"
 
+class BetterProgressMeter
 
-main = () ->
-  drawArcs(400, .5, .25)
+  constructor: (rootEl, size, start, expectedStart) ->
+    @rootEl = rootEl
+    @size = size
+    @progress = start
+    @expected = expectedStart
 
-pctToRadians = (pct) ->
-  Math.PI * 2 * pct
+    @progressArc = null
+    @expectedArc = null
+    @progressArcPath = null
+    @expectedArcPath = null
 
-drawArcs = (size, start, expectedStart) ->
-  start = pctToRadians(start)
-  expectedStart = pctToRadians(expectedStart)
-  radius = size / 2
+    if rootEl
+      @drawArcs()
 
-  outerArc = d3.svg.arc()
+  pctToRadians: (pct) ->
+    Math.PI * 2 * pct
+
+  drawArcs: () ->
+#  drawArcs = (rootEl, size, start, expectedStart) ->
+    start = @pctToRadians(@progress)
+    expectedStart = @pctToRadians(@expected)
+    radius = @size / 2
+
+    @progressArc = d3.svg.arc()
     .innerRadius(Math.floor(radius))
     .outerRadius(radius - 5)
     .startAngle(0)
 
-  innerArc = d3.svg.arc()
+    @expectedArc = d3.svg.arc()
     .innerRadius(Math.floor(radius - 10))
     .outerRadius(radius - 15)
     .startAngle(0)
 
-  svg = d3.select('body')
+    svg = d3.select(@rootEl)
     .append('svg')
-    .attr("width", size)
-    .attr("height", size)
+    .attr("width", @size)
+    .attr("height", @size)
     .append('g')
     .attr('transform', "translate(#{Math.floor(radius)}, #{Math.floor(radius)})")
 
-  outerArcPath = svg.append("path")
+    @progressArcPath = svg.append("path")
     .datum(endAngle: start)
     .style('fill', 'green')
-    .attr('d', outerArc)
+    .attr('d', @progressArc)
 
-  innerArcPath = svg.append("path")
+    @expectedArcPath = svg.append("path")
     .datum(endAngle: expectedStart)
     .style('fill', 'lightgreen')
-    .attr('d', innerArc)
+    .attr('d', @expectedArc)
 
 
-  updateProgressMeter = (newProgress, path, arc) ->
+  _updateProgressMeter: (newProgress, path, arc) ->
     ###
     Animate a transition between the current progress and the provided progress
     for the given arc and arc path
@@ -52,7 +65,7 @@ drawArcs = (size, start, expectedStart) ->
     arc: arc function describing the arc to be drawn
     ###
 
-    arcTween = (transition, newAngle, arc) ->
+    arcTween = (transition, newAngle, arc) =>
       ###
       arcTween function adapted from http://bl.ocks.org/mbostock/5100636
       ###
@@ -63,18 +76,27 @@ drawArcs = (size, start, expectedStart) ->
           return arc(d)
 
     path.transition()
-      .duration(750)
-      .call(arcTween, pctToRadians(newProgress), arc)
+    .duration(750)
+    .call(arcTween, @pctToRadians(newProgress), arc)
 
-  addButton = ->
-  # Temporary function to add a button to the document for easy testing
-    button = $('<button>hello</button>')
-    button.on "click", ->
-      updateProgressMeter Math.random(), innerArcPath, innerArc
+  updateProgress: (expected, actual) ->
+    @_updateProgressMeter(expected, @expectedArcPath, @expectedArc)
+    @_updateProgressMeter(actual, @progressArcPath, @progressArc)
 
-    $('body').append button
 
-  addButton()
+
+
+main = () ->
+  a = new BetterProgressMeter("body", 400, .5, .25)
+  button = $('<button>hello</button>')
+  button.on "click", ->
+    a._updateProgressMeter Math.random(), a.expectedArcPath, a.expectedArc
+  window.u = a
+
+  $('body').append button
+
+
+
 
 
 
