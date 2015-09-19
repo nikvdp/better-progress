@@ -3,18 +3,19 @@ d3 = require "d3"
 
 class BetterProgressMeter
 
-  constructor: (rootEl, size, start, expectedStart) ->
-    @rootEl = rootEl
-    @size = size or 104
-    @actual = start or 0
-    @expected = expectedStart or 0
+  constructor: (options) ->
+#  constructor: (rootEl, size, start, expectedStart) ->
+
+    @rootEl = options.rootEl or document.createElement("div")
+    @size = options.size or 104
+    @actual = options.actual or 0
+    @expected = options.expected or 0
 
     @actualArc = null
     @expectedArc = null
     @actualArcPath = null
     @expectedArcPath = null
 
-    if rootEl
       @drawArcs()
       @updateProgress(@expected, @actual)
 
@@ -162,7 +163,7 @@ class BetterProgressMeter
 
 
 main = () ->
-  a = new BetterProgressMeter("body", 175, .3, .6)
+  a = new BetterProgressMeter(rootEl: "body", size: 104, actual: .3, expected: .6)
   button = $('<button>hello</button>')
   button.on "click", ->
 #    a._updateProgressMeter Math.random(), a.expectedArcPath, a.expectedArc, "red"
