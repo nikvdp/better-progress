@@ -67,13 +67,24 @@ class BetterProgressMeter
     .style("font-family", "sans-serif")
     .attr("data-hook", "actual-progress-text")
     .attr("text-anchor", "middle")
-    .attr("dx", ".3em")
+    .attr("font-size", "#{edge * .8}px")
+    .attr("y", "5")
     .attr("fill", "black")
+    .text("0")
+
+    svg.append("text")
+    .style("font-family", "sans-serif")
+    .attr("text-anchor", "start")
+    .attr("font-size", "#{edge * .4}px")
+    .attr("dx", "1.2em")
+    .attr("fill", "black")
+    .text("%")
 
     svg.append("text")
     .style("font-family", "sans-serif")
     .attr("text-anchor", "middle")
-    .attr("dy", "1em")
+    .attr("font-size", "#{edge * .3}px")
+    .attr("dy", "1.2em")
     .attr("fill", "black")
     .text("Progress")
 
@@ -89,12 +100,12 @@ class BetterProgressMeter
     ###
     @actualArcPath = svg.append("path")
     .datum(endAngle: start)
-    .style('fill', 'green')
+    .style('fill', '#79c600')
     .attr('d', @actualArc)
 
     @expectedArcPath = svg.append("path")
     .datum(endAngle: expectedStart)
-    .style('fill', 'lightgreen')
+    .style('fill', '#c8e993')
     .attr('d', @expectedArc)
 
 
@@ -121,7 +132,7 @@ class BetterProgressMeter
           return arc(d)
 
     trns = path.transition()
-    .duration(750)
+    .duration(500)
 
     if changeColor
       trns.style("fill", changeColor)
@@ -136,7 +147,7 @@ class BetterProgressMeter
     else if Math.abs(expected - actual) > .25
       changeColor = "orange"
     else
-      changeColor = "green"
+      changeColor = "#79c600"
 
 
     @_updateProgressMeter(expected, @expectedArcPath, @expectedArc)
@@ -145,7 +156,7 @@ class BetterProgressMeter
     # update the text count
     $(@rootEl)
     .find("[data-hook=actual-progress-text]")
-    .text(Math.floor(actual*100) + "%")
+    .text(Math.floor(actual*100))
 
     return
 
