@@ -89,7 +89,7 @@ class BetterProgressMeter
     .attr('d', @expectedArc)
 
 
-  _updateProgressMeter: (newProgress, path, arc) ->
+  _updateProgressMeter: (newProgress, path, arc, changeColor) ->
     ###
     Animate a transition between the current progress and the provided progress
     for the given arc and arc path
@@ -98,6 +98,7 @@ class BetterProgressMeter
     newProgress: a float between 0 and 1 indicating the pct progress to update to
     path: the svg path of the existing arc to be updated
     arc: arc function describing the arc to be drawn
+    changeColor: the value of the color to change too (optional)
     ###
 
     arcTween = (transition, newAngle, arc) =>
@@ -110,24 +111,42 @@ class BetterProgressMeter
           d.endAngle = interpolate(t)
           return arc(d)
 
-    path.transition()
+    trns = path.transition()
     .duration(750)
-    .call(arcTween, @pctToRadians(newProgress), arc)
+
+    if changeColor
+      trns.style("fill", changeColor)
+
+    trns.call(arcTween, @pctToRadians(newProgress), arc)
 
   updateProgress: (expected, actual) ->
-    @_updateProgressMeter(expected, @expectedArcPath, @expectedArc)
-    @_updateProgressMeter(actual, @actualArcPath, @actualArc)
+    changeColor = null
+    console.log
+    if Math.abs(expected - actual) > .5
+      changeColor = "red"
+    else if Math.abs(expected - actual) > .25
+      changeColor = "orange"
+    else
+      changeColor = "green"
 
+
+    @_updateProgressMeter(expected, @expectedArcPath, @expectedArc)
+    @_updateProgressMeter(actual, @actualArcPath, @actualArc, changeColor)
+
+    # update the text count
     $(@rootEl)
     .find("[data-hook=actual-progress-text]")
     .text(Math.floor(actual*100) + "%")
+
+    return
 
 
 main = () ->
   a = new BetterProgressMeter("body", 175, .3, .6)
   button = $('<button>hello</button>')
   button.on "click", ->
-    a._updateProgressMeter Math.random(), a.expectedArcPath, a.expectedArc
+#    a._updateProgressMeter Math.random(), a.expectedArcPath, a.expectedArc, "red"
+    a.updateProgress(Math.random(), Math.random())
   window.u = a
 
   $('body').append button
