@@ -170,7 +170,7 @@ class BetterProgressMeter
     # update the text count
     $(@rootEl)
     .find("[data-hook=actual-progress-text]")
-    .textContent = Math.floor(actual*100)
+    .text(Math.floor(actual*100))
 
     return
 
