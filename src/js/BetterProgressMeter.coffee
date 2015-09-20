@@ -53,7 +53,7 @@ class BetterProgressMeter
     .innerRadius(edge - (actualArcWidth/2))
     .startAngle(0)
 
-    edge -= actualArcWidth/2 # subtract the widht of the inner (expected) meter
+    edge -= actualArcWidth/2 # subtract the wihdt of the inner (expected) meter
 
     svg = d3.select(@rootEl)
     .append('svg')
@@ -99,16 +99,6 @@ class BetterProgressMeter
     .attr("fill", "black")
     .text("Progress")
 
-
-    ###
-  .style("font-size",20)
-  .append("textPath")
-//  .attr("textLength",function(d,i){return 90-i*5 ;})
-  .attr("xlink:href",function(d,i){return "#s"+i;})
-  .attr("startOffset",function(d,i){return 3/20;})
-  .attr("dy","-1em")
-  .text(function(d){return d.label;})
-    ###
     @actualArcPath = svg.append("path")
     .datum(endAngle: start)
     .style('fill', '#79c600')
@@ -142,8 +132,7 @@ class BetterProgressMeter
           d.endAngle = interpolate(t)
           return arc(d)
 
-    trns = path.transition()
-    .duration(500)
+    trns = path.transition().duration(500)
 
     if changeColor
       trns.style("fill", changeColor)
@@ -155,19 +144,18 @@ class BetterProgressMeter
     actual = @normalizePcts(actual)
 
     changeColor = null
-    console.log
-    if Math.abs(expected - actual) > .5
+    diff = Math.abs(expected - actual)
+    if diff > .5
       changeColor = "red"
-    else if Math.abs(expected - actual) > .25
+    else if diff > .25
       changeColor = "orange"
     else
       changeColor = "#79c600"
 
-
     @_updateProgressMeter(expected, @expectedArcPath, @expectedArc)
     @_updateProgressMeter(actual, @actualArcPath, @actualArc, changeColor)
 
-    # update the text count
+    # update the text's percentage
     $(@rootEl)
     .find("[data-hook=actual-progress-text]")
     .text(Math.floor(actual*100))
