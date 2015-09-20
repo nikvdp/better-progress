@@ -1,20 +1,25 @@
 $ = require "jquery"
-
-
+angular = require("angular")
 
 
 BetterProgressMeter = require("./BetterProgressMeter.coffee")
 
-main = () ->
-  a = new BetterProgressMeter(rootEl: "body", size: 104, actual: .3, expected: .6)
-  button = $('<button>hello</button>')
-  button.on "click", ->
-#    a._updateProgressMeter Math.random(), a.expectedArcPath, a.expectedArc, "red"
-    a.updateProgress(Math.random(), Math.random())
-  window.u = a
+angular.module 'BetterProgressTestApp', []
 
-  $('body').append button
+.controller 'MainCtrl', ($scope) ->
+  $scope.name = "cool"
+  $scope.expected = .30
+  $scope.actual = .20
 
-
-$(document).ready(main)
+.directive 'betterProgress', ->
+  return {
+    restrict: 'E'
+    link: (scope, el, attrs) ->
+      meter = new BetterProgressMeter(actual: attrs.actual, expected: attrs.expected)
+      el.append(meter.rootEl)
+      attrs.$observe 'expected', (val) ->
+        meter.updateProgress(val, attrs.actual)
+      attrs.$observe 'actual', (val) ->
+        meter.updateProgress(attrs.expected, val)
+  }
 

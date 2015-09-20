@@ -1,8 +1,12 @@
 d3 = require "d3"
+$ = require "jquery"
 
 class BetterProgressMeter
 
   constructor: (options) ->
+
+    if not options
+      options = {}
 
     @rootEl = options.rootEl or document.createElement("div")
     @size = options.size or 104
@@ -164,8 +168,8 @@ class BetterProgressMeter
     @_updateProgressMeter(actual, @actualArcPath, @actualArc, changeColor)
 
     # update the text count
-    document.querySelector(@rootEl)
-    .querySelector("[data-hook=actual-progress-text]")
+    $(@rootEl)
+    .find("[data-hook=actual-progress-text]")
     .textContent = Math.floor(actual*100)
 
     return

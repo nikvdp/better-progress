@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="BetterProgressTestApp">
 <head>
     <title></title>
     <meta charset="utf-8" />
 </head>
 <body>
-    <header>
-        
-    </header>
-    <footer>
-        
-    </footer>
-    <script src="js/bundle.js" type="text/javascript"></script>
+<div ng-controller="MainCtrl"> My name is {{ name }}
+    <better-progress data-expected="{{expected}}" data-actual="{{actual}}"/>
+    <br>
+    expected: <input ng-model="expected" type="text"> <br>
+    actual: <input ng-model="actual" type="text">
+</div>
+<script src="js/bundle.js" type="text/javascript"></script>
 </body>
 </html>
