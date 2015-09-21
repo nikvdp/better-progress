@@ -23,6 +23,10 @@ describe "BetterworksProgressMeter class", ->
     expect(meter.actual).toEqual 0
     expect(meter.expected).toEqual 0
 
+    meter.updateProgress(undefined, null)
+    expect(meter.actual).toEqual 0
+    expect(meter.expected).toEqual 0
+
   it "Should change colors when expected and actual are more than 25% apart", ->
     meter.updateProgress(0, 0)
     initialColor = meter.color
