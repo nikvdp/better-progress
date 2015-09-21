@@ -7,9 +7,18 @@
 <body>
 <div ng-controller="MainCtrl"> My name is {{ name }}
     <better-progress data-expected="{{expected}}" data-actual="{{actual}}"/>
-    <br>
-    expected: <input ng-model="expected" type="text"> <br>
-    actual: <input ng-model="actual" type="text">
+    <div>
+        <label for="expected">expected (float): <input name="expected" ng-model="expected" type="number"> </label>
+    </div>
+    <div>
+        <label>actual (float): <input ng-model="actual" type="number"></label>
+    </div>
+    <div>
+        <label for="expected">expected (human): <input name="expected" ng-model="expected_human" ng-change="expected = expected_human / 100" type="number"> </label>
+    </div>
+    <div>
+        <label for="actual">actual (human): <input name="actual" ng-model="actual_human" ng-change="actual = actual_human / 100" type="number"> </label>
+    </div>
 </div>
 <script src="js/bundle.js" type="text/javascript"></script>
 </body>
