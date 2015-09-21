@@ -1,5 +1,4 @@
 d3 = require "d3"
-$ = require "jquery"
 
 class BetterProgressMeter
 
@@ -8,14 +7,19 @@ class BetterProgressMeter
     if not options
       options = {}
 
+    @actualProgressColor = '#79c600'
+    @expectedProgressColor = '#c8e993'
+
     @rootEl = options.rootEl or document.createElement("div")
     @size = options.size or 104
     @actual = @normalizePcts(options.actual)
     @expected = @normalizePcts(options.expected)
+    @color =  @actualProgressColor # color of outside progress meter
 
     @actualArc = null
     @expectedArc = null
     @actualArcPath = null
+    @progressTextEl = null
     @expectedArcPath = null
 
     @drawArcs()
@@ -74,9 +78,8 @@ class BetterProgressMeter
     .style("fill", "#f4f4f4")
     .attr('d', innerCircle)
 
-    svg.append("text")
+    @progressTextEl = svg.append("text")
     .style("font-family", "sans-serif")
-    .attr("data-hook", "actual-progress-text")
     .attr("text-anchor", "middle")
     .attr("font-size", "#{edge * .8}px")
     .attr("y", "5")
@@ -101,12 +104,12 @@ class BetterProgressMeter
 
     @actualArcPath = svg.append("path")
     .datum(endAngle: start)
-    .style('fill', '#79c600')
+    .style('fill', @actualProgressColor)
     .attr('d', @actualArc)
 
     @expectedArcPath = svg.append("path")
     .datum(endAngle: expectedStart)
-    .style('fill', '#c8e993')
+    .style('fill', @expectedProgressColor)
     .attr('d', @expectedArc)
 
 
@@ -153,12 +156,12 @@ class BetterProgressMeter
       changeColor = "#79c600"
 
     @_updateProgressMeter(expected, @expectedArcPath, @expectedArc)
+    @expected = expected
     @_updateProgressMeter(actual, @actualArcPath, @actualArc, changeColor)
+    @actual = actual
+    @color = changeColor
 
-    # update the text's percentage
-    $(@rootEl)
-    .find("[data-hook=actual-progress-text]")
-    .text(Math.floor(actual*100))
+    @progressTextEl.text(Math.round(actual*100))
 
     return
 
